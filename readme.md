@@ -4,13 +4,15 @@ This example of github repo is to demonstrate of the ability to leverage certain
 
 Below diagram presents the architecture view of application flow
 
-**High level architecture **
+**High level architecture**
 
 <img src="images/architectureRAG.png">
 
-Technical Flow
+
+**Technical Flow**
 
 <img src="images/architecture.png">
+
 
 **Pre-Requisites for setup**
 
