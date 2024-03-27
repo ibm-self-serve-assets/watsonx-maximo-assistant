@@ -2,6 +2,16 @@ Repository for publishing the integrated story of Maximo Manage + Watson.ai + Wa
 
 This example of github repo is to demonstrate of the ability to leverage certain AI and Generative AI functionality already built into the product as well as all the new use cases that are being continuosuly added into the product. this is an example of showcasing Watson Assistant be integrated with Maximo Manage module
 
+Below diagram presents the architecture view of application flow
+
+**High level architecture **
+
+<img src="images/architectureRAG.png">
+
+Technical Flow
+
+<img src="images/architecture.png">
+
 **Pre-Requisites for setup**
 
 1) Maximo Manage module installed and ability to make API requests to the application
