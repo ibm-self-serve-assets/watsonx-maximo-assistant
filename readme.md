@@ -265,6 +265,10 @@ The Open API json should have got created.
 
 <img src="images/image52.png">
 
+The download file may look like this [./files/OpenAPI-Maximo.json](./files/OpenAPI-Maximo.json)
+
+7. In the above file you need to change the line no. 10 `"url": "https://xxxx.appdomain.cloud"` with the appropriate url from the code engine.
+
 </details>
 
 ## 5. Create Custom Extension in Watson Assistant

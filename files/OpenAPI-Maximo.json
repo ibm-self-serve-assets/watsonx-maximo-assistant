@@ -1,0 +1,181 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Sample API",
+    "description": "A simple sample API",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://app-03-image2.1ea3xcnm2svv.us-east.codeengine.appdomain.cloud"
+    }
+  ],
+  "tags": [
+    {
+      "name": "maximo",
+      "description": "Maximo API"
+    },
+    {
+      "name": "hello",
+      "description": "Hello API"
+    },
+    {
+      "name": "books",
+      "description": "Books operations"
+    }
+  ],
+  "paths": {
+    "/books/": {
+      "get": {
+        "tags": [
+          "books"
+        ],
+        "operationId": "get_books",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/books/{id}": {
+      "get": {
+        "tags": [
+          "books"
+        ],
+        "operationId": "get_book",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "The books identifier",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ]
+    },
+    "/hello/": {
+      "get": {
+        "tags": [
+          "hello"
+        ],
+        "operationId": "get_hello_world",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/maximo/": {
+      "get": {
+        "tags": [
+          "maximo"
+        ],
+        "operationId": "get_maximo_world",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "maximo"
+        ],
+        "description": "Post method example",
+        "operationId": "post_maximo_world",
+        "parameters": [
+          {
+            "name": "X-Fields",
+            "in": "header",
+            "description": "An optional fields mask",
+            "schema": {
+              "type": "string",
+              "format": "mask"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InputData"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutputData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "payload"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "InputData": {
+        "required": [
+          "query"
+        ],
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The query to be asked with Maximo"
+          }
+        }
+      },
+      "OutputData": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {},
+              "description": "Description for raw field"
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "ParseError": {
+        "description": "When a mask can't be parsed",
+        "content": {}
+      },
+      "MaskError": {
+        "description": "When any error occurs on mask",
+        "content": {}
+      }
+    }
+  },
+  "x-original-swagger-version": "2.0"
+}
