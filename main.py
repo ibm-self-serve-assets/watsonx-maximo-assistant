@@ -14,6 +14,8 @@ from dotenv import load_dotenv
 import os, json
 
 from maximo import MaximoHandler
+from maximoapp import wxmas
+
 from flask_restx import Api, Resource, fields
 
 app = Flask(__name__, static_folder='./static', static_url_path='/')
@@ -38,7 +40,10 @@ input_data_model = api.model('InputData', {
 })
 # Define the model for the response payload
 output_data_model = api.model('OutputData', {
-    'result': fields.List(fields.Raw(description='Description for raw field'))
+    'query': fields.String(description='The Given Query'),
+    'sql': fields.String(description='The Generated SQL'),
+    'json': fields.String(description='The Generate JSON'),
+    'response': fields.String(description='The final response for the query'),
 })
 @ns.route('/')
 class MaximoWorld(Resource):
@@ -46,12 +51,16 @@ class MaximoWorld(Resource):
         maximoHandler = MaximoHandler()
         return maximoHandler.executeGetMain()
 
-    @ns.doc(description='Post method example', responses={200: 'Successful operation', 400: 'Invalid input'})
+    @ns.doc(description='Maximo', responses={200: 'Successful operation', 400: 'Invalid input'})
     @ns.expect(input_data_model)
     @ns.marshal_with(output_data_model)
     def post(self):
-        maximoHandler = MaximoHandler()
-        response = maximoHandler.executePostMain(api.payload)
+        # maximoHandler = MaximoHandler()
+        # response = maximoHandler.executePostMain(api.payload)
+
+        wxobj = wxmas()
+        response = wxobj.executePostMain(api.payload)
+
         print("------------------------------------------------ Sql Output ------------------------------------------------")
         print(response)
         print("---------------------------------------------------------------------------------------------------------------")
