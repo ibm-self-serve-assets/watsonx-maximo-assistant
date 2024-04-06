@@ -1,38 +1,47 @@
-Question: How many work orders are currently in progress?
-SQL: select count(1) from maximo.workorder where status='INPRG';
+How many work orders are currently in progress?
+select count(1) from maximo.workorder where status='INPRG'; --<end of SQL>
 
-Question: How many preventive maintainance work orders are stuck due to material unavailablity?
-SQL: select count(1) from maximo.workorder where worktype='PM' and status='WMATL';
+How many preventive maintainance work orders are stuck due to material unavailablity?
+select count(1) from maximo.workorder where worktype='PM' and status='WMATL'; --<end of SQL>
 
-Question: Get the details of corrective maintenance work orders waiting for approval?
-SQL: select wonum, description, worktype, status, owner, reportdate from maximo.workorder where worktype='CM' and and status='WAPPR';
+Get the details of corrective maintenance work orders waiting for approval?
+select wonum, description, worktype, status, owner, reportdate from maximo.workorder where worktype='CM' and and status='WAPPR'; --<end of SQL>
 
-Question: Get the details for all work orders reported in the last quarter?
-SQL: select wonum, description, worktype, status, owner, reportdate from maximo.workorder where reportdate>(sysdate - 90);
+Get the details for all work orders reported in the last quarter?
+select wonum, description, worktype, status, owner, reportdate from maximo.workorder where reportdate>(sysdate - 90); --<end of SQL>
 
-Question: What are the child work order details from the FREO site?
-SQL: select wonum, description, worktype, status, owner, reportdate from maximo.workorder where parent is not null and siteid='FREO';
+What are the child work order details from the FREO site?
+select wonum, description, worktype, status, owner, reportdate from maximo.workorder where parent is not null and siteid='FREO'; --<end of SQL>
 
-Question: Calculate the average estimated material cost for preventive maintenance work orders in BEDFORD site.
-SQL: SELECT avg(estmatcost) FROM maximo.workorder WHERE siteid = 'BEDFORD' AND worktype = 'PM';
+Calculate the average estimated material cost for preventive maintenance work orders in BEDFORD site.
+SELECT avg(estmatcost) FROM maximo.workorder WHERE siteid = 'BEDFORD' AND worktype = 'PM'; --<end of SQL>
 
-Question: Fetch work order details of work order 1225.
-SQL: select wonum, description, worktype, status, owner, reportdate from maximo.workorder where wonum='1225';
+Fetch work order details of work order 1225.
+select wonum, description, worktype, status, owner, reportdate from maximo.workorder where wonum='1225'; --<end of SQL>
 
-Question: Get the actual labor cost for work order 3478.
-SQL: select actlabcost from maximo.workorder where wonum='3478';
+Get the actual labor cost for work order 3478.
+select actlabcost from maximo.workorder where wonum='3478'; --<end of SQL>
 
-Question: Get the work order number, priority and job plan for all approved WOs in BEDFORD site.
-SQL: select wonum, wopriority, jpnum from maximo.workorder where status='APPR' and siteid='BEDFORD';
+Get the work order number, priority and job plan for all approved WOs in BEDFORD site.
+select wonum, wopriority, jpnum from maximo.workorder where status='APPR' and siteid='BEDFORD'; --<end of SQL>
 
-Question: How many work orders were completed on asset number 1234 in the last 1 year?
-SQL: select count(1) from maximo.workorder where assetnum='1234' and status='COMP' and reportdate>(sysdate - 365);
+How many work orders were completed on asset number 1234 in the last 1 year?
+select count(1) from maximo.workorder where assetnum='1234' and status='COMP' and reportdate>(sysdate - 365); --<end of SQL>
 
-Question: Get the asset number and location for work order 1234.
-SQL: select assetnum, location from maximo.workorder where wonum='1234';
+Get the asset number and location for work order 1234.
+select assetnum, location from maximo.workorder where wonum='1234'; --<end of SQL>
 
-Question: What is the work type of work order 1309?
-SQL: select worktype from maximo.workorder where wonum='1309';
+What is the work type of work order 1309?
+select worktype from maximo.workorder where wonum='1309'; --<end of SQL>
 
-Question: Get the asset number, status and work order priority for work order 1309.
-SQL: select assetnum, status, wopriority from maximo.workorder where wonum='1309';
+Get the asset number, status and work order priority for work order 1309.
+select assetnum, status, wopriority from maximo.workorder where wonum='1309'; --<end of SQL>
+
+How many work orders are currently open for asset HVAC450?
+select count(1) from maximo.workorder where assetnum='HVAC450' and status not in ('COMP','CLOSE'); --<end of SQL>
+
+Get the details of the last work order reported for asset number 11450.
+select wonum, description, worktype, status, owner, reportdate from maximo.workorder where assetnum='11450' and reportdate is not null order by reportdate desc limit 1; --<end of SQL>
+
+Who is the owner of work order 1309?
+select owner from maximo.workorder where wonum='1309'; --<end of SQL>
