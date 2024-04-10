@@ -11,7 +11,6 @@ from dotenv import load_dotenv
 import os, json
 import getpass
 
-from ibm_cloud_sdk_core import IAMTokenManager
 
 class MaximoHandler(object):
 

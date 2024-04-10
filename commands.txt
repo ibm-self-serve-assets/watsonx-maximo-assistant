@@ -4,6 +4,7 @@ pip install ibm-db
 
 python -m pip install ibm_db
 
-python -m pip install ibm_cloud_sdk_core
+ibm_cloud_sdk_core
+python -m pip install ibm_cloud_sdk_core==3.19.1
 
 python main.py

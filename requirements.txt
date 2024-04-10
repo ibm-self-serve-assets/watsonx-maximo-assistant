@@ -9,4 +9,4 @@ ibm_db
 
 python-dotenv
 flask-restx
-ibm_cloud_sdk_core
+ibm-cloud-sdk-core==3.19.1

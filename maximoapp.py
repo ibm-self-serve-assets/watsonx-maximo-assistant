@@ -15,7 +15,8 @@ class wxmas:
         self.WX_APIKEY = os.getenv("WX_APIKEY", None)
         self.WX_ENDPOINT_URL = os.getenv("WX_ENDPOINT_URL", None)
         self.WX_PROJECT_ID = os.getenv("WX_PROJECT_ID", None)
-        self.WX_MODEL_ID = os.getenv("WX_MODEL_ID", None)
+        self.WX_MODEL_ID_NLP = os.getenv("WX_MODEL_ID_NLP", None)
+        self.WX_MODEL_ID_SQL = os.getenv("WX_MODEL_ID_SQL", None)
         self.WX_ACCESS_TOKEN = IAMTokenManager(apikey = self.WX_APIKEY, url = self.IBMC_AUTH_URL).get_token()
         self.WO_EXAMPLE_FILE = os.getenv("WO_EXAMPLE_FILE", "woExample.txt")
 
@@ -152,7 +153,7 @@ class wxmas:
         prompt_input = instruction + context + example + query + "\n"
         #print(prompt_input)
 
-        sqlGenllmResponse = self.getWXres(self.WX_PROJECT_ID, self.WX_MODEL_ID, prompt_input, 50)
+        sqlGenllmResponse = self.getWXres(self.WX_PROJECT_ID, self.WX_MODEL_ID_SQL, prompt_input, 50)
 
         if sqlGenllmResponse.status_code == 200:
             genSQL_output = sqlGenllmResponse.json()["results"][0]["generated_text"]
@@ -177,7 +178,7 @@ class wxmas:
                 prompt_input = instruction + "\n" + query + "\n" + json.dumps(sql_output) + "\n\n"
                 #print(prompt_input)
 
-                json2NLPResponse = self.getWXres(self.WX_PROJECT_ID, self.WX_MODEL_ID, prompt_input, 200)
+                json2NLPResponse = self.getWXres(self.WX_PROJECT_ID, self.WX_MODEL_ID_NLP, prompt_input, 200)
                 #print(json2NLPResponse.json())
 
                 if json2NLPResponse.status_code == 200:
@@ -187,7 +188,7 @@ class wxmas:
         
                 #print("Response:")
                 #print(nlp_output)
-                result["response"] = nlp_output.strip()
+                result["response"] = nlp_output
         
         return result
 
