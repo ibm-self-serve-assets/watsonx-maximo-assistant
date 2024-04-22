@@ -3,7 +3,7 @@ import json
 import os
 from dotenv import load_dotenv
 from ibm_cloud_sdk_core import IAMTokenManager
-
+import time
 load_dotenv()
 
 class wxmas:
@@ -17,7 +17,6 @@ class wxmas:
         self.WX_PROJECT_ID = os.getenv("WX_PROJECT_ID", None)
         self.WX_MODEL_ID_NLP = os.getenv("WX_MODEL_ID_NLP", None)
         self.WX_MODEL_ID_SQL = os.getenv("WX_MODEL_ID_SQL", None)
-        self.WX_ACCESS_TOKEN = IAMTokenManager(apikey = self.WX_APIKEY, url = self.IBMC_AUTH_URL).get_token()
         self.WO_EXAMPLE_FILE = os.getenv("WO_EXAMPLE_FILE", "woExample.txt")
 
     def getObjectList(self):
@@ -48,6 +47,10 @@ class wxmas:
         return json.dumps(context)
     
     def getAttributeList(self, tablename):
+        print("------------------------------------------------ getAttributeList Started ------------------------------------------------")
+        start_time = time.time()
+        print("TableName ------> : ", tablename)                
+
         context = []
         ix = 0
         
@@ -59,7 +62,7 @@ class wxmas:
             "oslc.select": "attributename,title,remarks,maxtype",
             "savedQuery": "oobpersistentattr"
             }
-        
+
         headers = {
             "Content-Type": "application/json",
             "apikey": self.MAS_APIKEY
@@ -67,7 +70,7 @@ class wxmas:
         
         response = requests.get(url = url, params = params, headers = headers)
         maxattr = response.json()["member"]
-        
+
         for attr in maxattr:
             temp = {}
             temp["columnname"] = attr["attributename"]
@@ -89,12 +92,21 @@ class wxmas:
             ix = ix+1
             if ix == 100:
                 break
-    
+        
+        end_time = time.time()
+        execution_time = end_time - start_time
+        print("................... Execution time: getAttributeList : ", execution_time, "seconds")                
+        print("------------------------------------------------ getAttributeList Completed -------------------------------------------------\n\n\n")
+
         return json.dumps(context)
     
     def runSQL(self, sql):
+        print("------------------------------------------------ runSQL Started ------------------------------------------------")
+        start_time = time.time()
+        print("Sql ------> : ", sql)                
+
         url = self.MAS_URL + "/api/script/RUNSQL?lean=1&ignorecollectionref=1"
-        
+
         headers = {
             "Content-Type": "application/json",
             "apikey": self.MAS_APIKEY
@@ -105,10 +117,20 @@ class wxmas:
         }
 
         response = requests.post(url = url, json = body, headers = headers)
+
+        end_time = time.time()
+        execution_time = end_time - start_time
+        print("................... Execution time: runSQL : ", execution_time, "seconds")                
+        print("------------------------------------------------ runSQL Completed -------------------------------------------------\n\n\n")
+
         return response
         
     def getWXres(self, project_id, model_id, prompt_input, max_new_tokens):
-        #self.WX_ACCESS_TOKEN = IAMTokenManager(apikey = self.WX_APIKEY, url = self.IBMC_AUTH_URL).get_token()
+        print("------------------------------------------------ getWXres Started ------------------------------------------------")
+        start_time = time.time()
+        print("Prompt ------> : ", prompt_input)                
+
+        self.WX_ACCESS_TOKEN = IAMTokenManager(apikey = self.WX_APIKEY, url = self.IBMC_AUTH_URL).get_token()
         headers = {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer '+ self.WX_ACCESS_TOKEN
@@ -129,58 +151,76 @@ class wxmas:
             }
         
         response = requests.post(self.WX_ENDPOINT_URL, json=llmPayload, headers=headers)
+
+        end_time = time.time()
+        execution_time = end_time - start_time
+        print("................... Execution time: getWXres : ", execution_time, "seconds")                
+        print("------------------------------------------------ getWXres Completed ------------------------------------------------\n\n\n")
+
         return response
         
     def main(self, query):
+
+        print("=============================================== Main Started ===============================================")
+        start_time = time.time()
+
         result = {}
         result["query"] = query
         result["sql"] = "NA"
         result["json"] = "NA"
         result["response"] = "NA"
 
-        # Generating SQL query using LLM
+        ### Instruction
         instruction = "\nAct as an expert in generating SQL statements for DB2. Understand the table context given below, and find the relevant columns for the given input based on the labels provided. Then generate a SQL query by using only these columns that are provided in the context below. Do NOT create column names by yourself, only use names from the context provided below.\n"
         
+        ### Load Examples from file
         woExample = open(self.WO_EXAMPLE_FILE, "r")
         example = woExample.read() + "\n\n"
         woExample.close()
 
+        ### Context
         objectname = "WORKORDER"
         context = self.getAttributeList(objectname)
         context = context.replace("}, {", "},\n{")
         context = "\nCONTEXT:\n#####\n\nTABLE: MAXIMO." + objectname + "\n\nCOLUMNS:\n\n" + context + "\n\n#####\n"
 
+        ### Prompt
         prompt_input = instruction + context + example + query + "\n"
         #print(prompt_input)
 
+        ### Call LLM
         sqlGenllmResponse = self.getWXres(self.WX_PROJECT_ID, self.WX_MODEL_ID_SQL, prompt_input, 50)
-
         if sqlGenllmResponse.status_code == 200:
             genSQL_output = sqlGenllmResponse.json()["results"][0]["generated_text"]
         else:
             genSQL_output = sqlGenllmResponse.text
-        
         #print(genSQL_output)
         result["sql"] = genSQL_output
 
+
+        print("main : sqlGenllmResponse Status Code ", sqlGenllmResponse.status_code)                
         if sqlGenllmResponse.status_code == 200:
+
+            ### Run SQL
             sqlExecResponse = self.runSQL(genSQL_output)
             if sqlExecResponse.status_code == 200:
                 sql_output = sqlExecResponse.json()
             else:
                 sql_output = sqlExecResponse.text
-            
             #print(sql_output)
             result["json"] = json.dumps(sql_output)
 
+            print("main : sqlExecResponse Status Code ", sqlExecResponse.status_code)                
+
             if sqlExecResponse.status_code == 200:
+                ### Call LLM
                 instruction = "\nThe question below has an answer in JSON format. Convert the JSON response to a natural language response.\n"
                 prompt_input = instruction + "\n" + query + "\n" + json.dumps(sql_output) + "\n\n"
                 #print(prompt_input)
-
                 json2NLPResponse = self.getWXres(self.WX_PROJECT_ID, self.WX_MODEL_ID_NLP, prompt_input, 200)
                 #print(json2NLPResponse.json())
 
+                print("main : json2NLPResponse Status Code ", json2NLPResponse.status_code)                
                 if json2NLPResponse.status_code == 200:
                     nlp_output = json2NLPResponse.json()["results"][0]["generated_text"]
                 else:
@@ -189,7 +229,12 @@ class wxmas:
                 #print("Response:")
                 #print(nlp_output)
                 result["response"] = nlp_output
-        
+
+        end_time = time.time()
+        execution_time = end_time - start_time
+        print("................... Execution time: Main : ", execution_time, "seconds")                
+        print("=============================================== Main Completed ===============================================\n\n\n")
+ 
         return result
 
     def executePostMain(self, payload):

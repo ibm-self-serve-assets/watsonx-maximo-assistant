@@ -22,7 +22,7 @@ app = Flask(__name__, static_folder='./static', static_url_path='/')
 CORS(app)
 
 # Initialize Flask-RestX API with OpenAPI version
-api = Api(app, version='1.0', title='Sample API', description='A simple sample API', 
+api = Api(app, version='1.0', title='Watsonx Maximo Assistant API', description='Watsonx Maximo Assistant API', 
           doc='/swagger',  # Route for accessing the Swagger UI
           openapi_version='3.0.2'  # Specify the OpenAPI version here
 )
@@ -61,7 +61,7 @@ class MaximoWorld(Resource):
         wxobj = wxmas()
         response = wxobj.executePostMain(api.payload)
 
-        print("------------------------------------------------ Sql Output ------------------------------------------------")
+        print("------------------------------------------------ Final Response ------------------------------------------------")
         print(response)
         print("---------------------------------------------------------------------------------------------------------------")
         return response
