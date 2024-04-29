@@ -10,3 +10,5 @@ ibm_db
 python-dotenv
 flask-restx
 ibm-cloud-sdk-core==3.19.1
+
+matplotlib

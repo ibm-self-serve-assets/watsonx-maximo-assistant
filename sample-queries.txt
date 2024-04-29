@@ -1,0 +1,11 @@
+Get the details of all work orders in completed status for asset number 11450 over the last 1 year.
+
+How many work orders are curently open for asset number 11450?
+
+What is the work order number, work type and the status of all open work orders for asset number 11450?
+
+When was the last work order reported for asset number 11450?
+
+Get the details of the last work order reported for asset number 11450.
+
+Who is the owner of work order 1309?

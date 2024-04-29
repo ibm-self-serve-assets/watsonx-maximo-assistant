@@ -1,9 +1,12 @@
 FROM python:3.9-slim
 
-WORKDIR /
-COPY . /
-RUN pip install --trusted-host pypi.python.org -r requirements.txt
+WORKDIR /app
 
-EXPOSE 8080
+COPY . /app
+COPY ./app/woExamples.txt /app/woExamples.txt
+RUN pip install -r requirements.txt
+ENV FLASK_ENV production
 
-CMD ["python", "main.py"]
+EXPOSE 3001
+
+CMD ["python", "-u", "./app/main.py"]
