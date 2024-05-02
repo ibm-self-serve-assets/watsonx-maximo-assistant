@@ -29,17 +29,26 @@ class WaChart:
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(os.environ.get('LOGLEVEL', 'INFO').upper())
 
-    def generate_chart(self, data):
+
+    def generate_chart(self , data, x_field, y_field, chart_type="line"):
+
         self.logger.info("------------------------------------------------ generate_chart started -------------------------------------------------\n\n\n")
+ 
+        # Extract data for plotting
+        x_values = [row[x_field] for row in data]
+        y_values = [row[y_field] for row in data]
 
-        # Convert date strings to datetime objects
-        dates = [datetime.datetime.fromisoformat(row[0].replace('Z', '')) for row in data]
-        values = [row[1] for row in data]
+        # Plot the data based on chart type    
+        if chart_type == 'bar':
+            plt.bar(x_values, y_values)
+        elif chart_type == 'pie':
+            plt.pie(y_values, labels=x_values)
+        else:
+            plt.plot(x_values, y_values)
 
-        ### Plot the data
-        plt.plot(dates, values)
-        plt.xlabel('Date')
-        plt.ylabel('Value')
+        # Customize plot
+        plt.xlabel(x_field.capitalize())
+        plt.ylabel(y_field.upper())
         plt.title('Sample Chart')
         plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
         plt.tight_layout()
@@ -54,37 +63,33 @@ class WaChart:
 
         # Construct the image tag
         image_tag = f'<img class="WACImage__Image WACImage__Image--loaded" src="data:image/png;base64,{image_data}" alt="" style="display: block;"/>'
-
-        self.logger.debug(f"result : {image_tag}")
         self.logger.debug("------------------------------------------------ generate_chart completed -------------------------------------------------\n\n\n")
+
         return image_tag
+
 
     def generate_table(self, rows, fields):
         self.logger.info("------------------------------------------------ generate_table started -------------------------------------------------\n\n\n")
 
         table = "<table><tr>"
         for field in fields:
-            table = table + "<td style='border: 1px solid black; padding: 5px'><strong>" + field["name"] + "</strong></td>"
-        table = table + "</tr>"
+            table += f"<td style='border: 1px solid black; padding: 5px'><strong>{field['name']}</strong></td>"
+        table += "</tr>"
         for row in rows:
-            table = table + "<tr>"
-            for item in row:
+            table += "<tr>"
+            for field in fields:
+                item = row[field['name']]
                 if isinstance(item, datetime.datetime):
-                    table = table + f"<td style='border: 1px solid black; padding: 5px'>{self.format_date(item)}</td>"
+                    table += f"<td style='border: 1px solid black; padding: 5px'>{format_date(item)}</td>"
                 else:
-                    table = table + f"<td style='border: 1px solid black; padding: 5px'>{item}</td>"
-            table = table +"</tr>"
-        table = table + "</table>"
+                    table += f"<td style='border: 1px solid black; padding: 5px'>{item}</td>"
+            table += "</tr>"
+        table += "</table>"
 
         self.logger.debug(f"result {table}")
         self.logger.debug("------------------------------------------------ generate_table completed -------------------------------------------------\n\n\n")
         return table
     
-    def generate_chart1(self):
-        return self.generate_chart(self.data)
-    
-    def generate_table1(self):
-        return self.generate_table(self.data, self.fields)
 
     def format_date(date):
         # Convert datetime object to a formatted string

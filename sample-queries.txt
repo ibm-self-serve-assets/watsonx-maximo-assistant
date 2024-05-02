@@ -9,3 +9,11 @@ When was the last work order reported for asset number 11450?
 Get the details of the last work order reported for asset number 11450.
 
 Who is the owner of work order 1309?
+
+
+Get me work type & count of work type for work order using bar chart
+
+
+
+
+

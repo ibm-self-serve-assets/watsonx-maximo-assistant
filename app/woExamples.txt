@@ -14,7 +14,7 @@ What are the child work order details from the FREO site?
 select wonum, description, worktype, status, owner, reportdate from maximo.workorder where parent is not null and siteid='FREO'; --<end of SQL>
 
 Calculate the average estimated material cost for preventive maintenance work orders in BEDFORD site.
-SELECT avg(estmatcost) FROM maximo.workorder WHERE siteid = 'BEDFORD' AND worktype = 'PM'; --<end of SQL>
+SELECT avg(estmatcost) from maximo.workorder WHERE siteid = 'BEDFORD' AND worktype = 'PM'; --<end of SQL>
 
 Fetch work order details of work order 1225.
 select wonum, description, worktype, status, owner, reportdate from maximo.workorder where wonum='1225'; --<end of SQL>
@@ -45,3 +45,25 @@ select wonum, description, worktype, status, owner, reportdate from maximo.worko
 
 Who is the owner of work order 1309?
 select owner from maximo.workorder where wonum='1309'; --<end of SQL>
+
+Get count of work order status values for BEDFORD site
+select status, count(1) from maximo.workorder where siteid='BEDFORD' group by status ; --<end of SQL>
+
+Get me work type & count of work type for work order using bar chart
+Select worktype, count(worktype) from maximo.workorder group by worktype ; --<end of SQL>
+
+Get me average of actual labor cost for active Work Orders
+Select WORKTYPE, avg(ACTLABCOST) avg FROM MAXIMO.WORKORDER where STATUS IN ('WAPPR','APPR','INPRG') GROUP BY WORKTYPE --<end of SQL>
+
+Get me work type & count of work type for work order
+Select WORKTYPE,count(worktype) from maximo.workorder group by WORKTYPE ; --<end of SQL>
+
+Get me work type for all active work orders using bar chart
+Select WORKTYPE, count(WONUM)  FROM MAXIMO.WORKORDER where STATUS IN ('WAPPR','APPR','INPRG') group by WORKTYPE --<end of SQL>
+
+Get me count of work order by Status 
+Select WORKTYPE, count(wonum) from maximo.workorder group by WORKTYPE ; --<end of SQL>
+
+Get me commonly used failure for work orders using pie chart
+Select FAILURECODE, count(FAILURECODE) from maximo.workorder group by FAILURECODE; --<end of SQL>
+

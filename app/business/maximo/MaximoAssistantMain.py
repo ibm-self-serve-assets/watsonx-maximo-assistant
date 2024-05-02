@@ -46,6 +46,8 @@ class MaximoAssistantMain:
             ### Run SQL in Maximo
             sqlResponse = maximoHandler.runSQL(sql)
             sql_output = json.dumps(sqlResponse["sql_output"])
+
+
             result["sql_output_json"] = sql_output
 
             if sqlResponse["status_code"] == 200:
@@ -53,14 +55,35 @@ class MaximoAssistantMain:
                 llmResponse = llmHandler.generateSummary(query, sql_output)
                 result["response"] = llmResponse["output"]
 
-                ### Create Chart if required
-                waChart = WaChart()
-                imageTagText = waChart.generate_chart1()
-                result["graph"] = imageTagText
 
-                ### Create html table if required
-                tableText = waChart.generate_table1()
-                result["table"] = tableText
+                waChart = WaChart()
+
+                ### Create html table if required ----
+                json_data = json.loads(sql_output)
+                chart_dict = json_data[0]
+                keys = list(chart_dict.keys())
+                print("keys in response = ",keys)
+            
+                # Creating the desired format for fields
+                fields = [{"name": key} for key in keys]
+                table_tag = waChart.generate_table(rows = json_data, fields=fields)
+                result["table"] = table_tag
+
+                ### Create Chart if required
+                image_tag = None
+                #Creating Chart based on sql function and number of json attributes 
+                aggregation_functions = ['COUNT', 'SUM', 'AVG', 'MIN', 'MAX', 'GROUP_CONCAT', 'STRING_AGG', 'ARRAY_AGG', 'JSON_ARRAYAGG', 'JSON_OBJECTAGG']
+                for func in aggregation_functions:
+                    if func in sql and len(keys)<=3:
+                        print("chart will be created...") 
+                        if "bar" in result['query']:
+                            image_tag = waChart.generate_chart(data = json_data,x_field=keys[0] , y_field=keys[1] ,chart_type='bar')
+                        elif "pie" in result['query']:
+                            image_tag = waChart.generate_chart(data = json_data,x_field=keys[0], y_field=keys[1] ,chart_type='pie')
+                        else :
+                            image_tag = waChart.generate_chart(data = json_data,x_field=keys[0] , y_field=keys[1] )
+                        print(image_tag)
+                result["graph"] = image_tag
 
         end_time = time.time()
         execution_time = end_time - start_time
