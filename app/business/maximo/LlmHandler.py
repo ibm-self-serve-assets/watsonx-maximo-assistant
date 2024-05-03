@@ -19,6 +19,7 @@ class LlmHandler:
         self.WX_MODEL_ID_SQL = os.getenv("WX_MODEL_ID_SQL", None)
         self.WX_INSTRUCTION1 = os.getenv("WX_INSTRUCTION1", "")
         self.WX_INSTRUCTION2 = os.getenv("WX_INSTRUCTION2", "")
+        self.GITHUB_PATH_EXAMPLE_FILE = os.getenv("GITHUB_PATH_EXAMPLE_FILE", "")
 
         self.EXAMPLES_FILE = "woExamples.txt"
         self.CHART_FILE = "chart.txt"
@@ -72,10 +73,11 @@ class LlmHandler:
 
     def loadExampleFileData(self):
         self.logger.info("------------------------------------------------ loadExampleFileData Started ------------------------------------------------")
-        woExample = open(self.EXAMPLES_FILE, "r")
-        exampleData = woExample.read() + "\n\n"
-        woExample.close()
-        self.logger.debug(f"Example file content : {exampleData}")                
+        # woExample = open(self.EXAMPLES_FILE, "r")
+        # exampleData = woExample.read() + "\n\n"
+        # woExample.close()
+        exampleData = self.get_file_from_github()
+        self.logger.info(f"Example file content : {exampleData}")                
         self.logger.debug("------------------------------------------------ loadExampleFileData Completed ------------------------------------------------")
         return exampleData
     
@@ -111,3 +113,19 @@ class LlmHandler:
         self.logger.debug(f"generateSummary : result : {llmResponse}")  
         self.logger.debug("------------------------------------------------ generateSummary Completed ------------------------------------------------")
         return llmResponse 
+
+
+    def get_file_from_github(self):
+        self.logger.info("------------------------------------------------ get_file_from_github Started ------------------------------------------------")
+        result = None
+        try:
+            response = requests.get(self.GITHUB_PATH_EXAMPLE_FILE)
+            if response.status_code == 200:
+                result = response.text
+        except requests.RequestException as e:
+            self.logger.debug(f"Error fetching file: {e}")
+            result = None
+
+        self.logger.debug("------------------------------------------------ get_file_from_github completed ------------------------------------------------")
+        return result
+

@@ -15,5 +15,7 @@ Get me work type & count of work type for work order using bar chart
 
 
 
+Get me average of actual labor cost for active Work Orders using bar chart
 
 
+Show a chart containing the count of open work orders against work-type.

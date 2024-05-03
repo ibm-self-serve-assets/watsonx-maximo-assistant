@@ -29,8 +29,8 @@ class WaChart:
 
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(os.environ.get('LOGLEVEL', 'INFO').upper())
-        self.WX_AGGREGATION_FUNCTIONS = os.getenv("WX_AGGREGATION_FUNCTIONS", "")
-
+        self.WX_GRAPH_CHECK = os.getenv("WX_GRAPH_CHECK", "")
+        self.WX_TABLE_CHECK = os.getenv("WX_TABLE_CHECK", "")
 
     ### Creating Chart based on sql function and number of json attributes 
     def generate_chart_and_graph(self, query, sql, sql_output):
@@ -47,48 +47,34 @@ class WaChart:
             fields = list(json_data[0].keys())
 
             ### Create html table
-            result["table"] = self._generate_table(json_data, fields)
+            items = self.WX_TABLE_CHECK.lower().split('###')
+            for item in items:
+                if item in query.lower() :
+                    result["table"] = self._generate_table(json_data, fields)
+                    break
 
+            ### Create chart
             if len (fields) == 2 :
-                result["graph"] = self._generate_chart_after_validation(query, sql, json_data, fields)
+                items = self.WX_GRAPH_CHECK.lower().split('###')
+                for item in items:
+                    if item in query.lower() :
+                        result["graph"] = self._generate_chart(query, json_data, fields)
+                        break
         
         self.logger.debug("------------------------------------------------ generate_chart_and_graph completed -------------------------------------------------\n\n\n")
         return result
 
 
-    ### Creating Chart based on sql function and number of json attributes 
-    def _generate_chart_after_validation(self, query, sql, json_data, fields):
-        self.logger.info("------------------------------------------------ generate_chart_after_validation started -------------------------------------------------\n\n\n")
-
-        image_tag = None
-
-        ### Check chart is possible
-        chartFlag = False        
-        aggregation_functions = self.WX_AGGREGATION_FUNCTIONS.split('###')
-        for func in aggregation_functions:
-            if func.lower() in sql :
-                chartFlag = True
-                break
-        self.logger.debug(f"generate_chart : chartFlag : {chartFlag}")
- 
-        if chartFlag : 
-            ### Chart Type
-            chart_type = "line"
-            if " bar " in query:  
-                chart_type = "bar"
-            elif " pie " in query:
-                chart_type = "pie"
-            self.logger.debug(f"generate_chart : chart_type : {chart_type}")
-
-            ### Generate Chart
-            image_tag = self._generate_chart(json_data, fields, chart_type)
-        self.logger.debug("------------------------------------------------ generate_chart_after_validation completed -------------------------------------------------\n\n\n")
-        return image_tag
-
-    def _generate_chart(self , data, fields, chart_type):
-
+    def _generate_chart(self, query, data, fields):
         self.logger.info("------------------------------------------------ generate_chart started -------------------------------------------------\n\n\n")
- 
+
+        ### Chart Type
+        chart_type = "line"
+        if " bar " in query:  
+            chart_type = "bar"
+        elif " pie " in query:
+            chart_type = "pie"
+
         x_field = fields[0]
         y_field = fields[1]
 
@@ -118,6 +104,7 @@ class WaChart:
 
         # Encode the bytes object as base64
         image_data = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        plt.close()
 
         # Construct the image tag
         image_tag = f'<img class="WACImage__Image WACImage__Image--loaded" src="data:image/png;base64,{image_data}" alt="" style="display: block;"/>'
@@ -133,7 +120,7 @@ class WaChart:
         for field in fields:
             table += f"<td style='border: 1px solid black; padding: 5px'><strong>{field}</strong></td>"
         table += "</tr>"
-        
+
         # Generate table rows
         for row in json_data:
             table += "<tr>"
