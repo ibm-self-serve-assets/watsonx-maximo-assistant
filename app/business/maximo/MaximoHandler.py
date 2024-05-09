@@ -23,8 +23,7 @@ class MaximoHandler:
         start_time = time.time()
         self.logger.debug(f"TableName  : {tablename}")
 
-        context = []
-        ix = 0
+       
         
         url = self.MAS_URL + "/api/os/MXAPIMAXATTRIBUTE?oslc.where=objectname=%22" + tablename + "%22"
         
@@ -40,32 +39,37 @@ class MaximoHandler:
             "apikey": self.MAS_APIKEY
             }
         
+        columns = []
+        ix = 0
         response = requests.get(url = url, params = params, headers = headers)
-        maxattr = response.json()["member"]
+        try:
+            maximoAttr = response.json["member"]
 
-        for attr in maxattr:
-            temp = {}
-            temp["columnname"] = attr["attributename"]
-            temp["datatype"] = attr["maxtype"]
-            temp["label"] = attr["title"]
-            #temp["description"] = attr["remarks"]
+            for attr in maximoAttr:
+                temp = {}
+                temp["columnname"] = attr["attributename"]
+                temp["datatype"] = attr["maxtype"]
+                temp["label"] = attr["title"]
+                #temp["description"] = attr["remarks"]
 
-            #Convert to data type to VARCHAR/NUMBER/TIMESTAMP
-            if temp["datatype"] in ["ALN","BLOB","CLOB","CRYPTO","CRYPTOX","GL","LONGALN","LOWER","UPPER"]:
-                temp["datatype"] = "VARCHAR"
-            elif temp["datatype"] in ["AMOUNT","BIGINT","DECIMAL","DURATION","FLOAT","INTEGER","SMALLINT"]:
-                temp["datatype"] = "NUMBER"
-            elif temp["datatype"] in ["DATE","TIME","DATETIME"]:
-                temp["datatype"] = "TIMESTAMP"
-            elif temp["datatype"] in ["YORN"]:
-                temp["datatype"] = "BOOLEAN"
-                
-            context.append(temp)
-            ix = ix+1
-            if ix == 100:
-                break
+                #Convert to data type to VARCHAR/NUMBER/TIMESTAMP
+                if temp["datatype"] in ["ALN","BLOB","CLOB","CRYPTO","CRYPTOX","GL","LONGALN","LOWER","UPPER"]:
+                    temp["datatype"] = "VARCHAR"
+                elif temp["datatype"] in ["AMOUNT","BIGINT","DECIMAL","DURATION","FLOAT","INTEGER","SMALLINT"]:
+                    temp["datatype"] = "NUMBER"
+                elif temp["datatype"] in ["DATE","TIME","DATETIME"]:
+                    temp["datatype"] = "TIMESTAMP"
+                elif temp["datatype"] in ["YORN"]:
+                    temp["datatype"] = "BOOLEAN"
+                    
+                columns.append(temp)
+                ix = ix+1
+                if ix == 100:
+                    break
+        except Exception as e:
+            self.logger.error (f' Error in getColumns : {e} ')
 
-        result = json.dumps(context)    
+        result = json.dumps(columns)    
 
         end_time = time.time()
         execution_time = end_time - start_time
