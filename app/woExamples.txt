@@ -45,24 +45,3 @@ select wonum, description, worktype, status, owner, reportdate from maximo.worko
 
 Who is the owner of work order 1309?
 select owner from maximo.workorder where wonum='1309'; --<end of SQL>
-
-Show a chart containing the count of open work orders against work-type.
-Select WORKTYPE, count(wonum) from maximo.workorder group by WORKTYPE ; --<end of SQL>
-
-Provide a bar chart displaying the average actual labor cost for active work orders categorized by work type.
-Select WORKTYPE, avg(ACTLABCOST) avg FROM MAXIMO.WORKORDER where STATUS IN ('WAPPR','APPR','INPRG') GROUP BY WORKTYPE --<end of SQL>
-
-Display a bar chart illustrating the distribution of work types for all active work orders.
-Select WORKTYPE, count(WONUM)  FROM MAXIMO.WORKORDER where STATUS IN ('WAPPR','APPR','INPRG') group by WORKTYPE --<end of SQL>
-
-Present a chart displaying the count of work orders by their statuses.
-Select WORKTYPE, count(wonum) from maximo.workorder group by WORKTYPE ; --<end of SQL>
-
-Generate a pie chart showcasing the distribution of commonly used failure codes within work orders.
-Select FAILURECODE, count(FAILURECODE) from maximo.workorder group by FAILURECODE; --<end of SQL>
-
-Fetch a table displaying work order details of all completed work order for asset 11450.
-select wonum, description, worktype, status, owner, reportdate from maximo.workorder where assetnum='11450'; --<end of SQL>
-
-
-
