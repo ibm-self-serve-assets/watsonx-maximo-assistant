@@ -45,3 +45,55 @@ select wonum, description, worktype, status, owner, reportdate from maximo.worko
 
 Who is the owner of work order 1309?
 select owner from maximo.workorder where wonum='1309'; --<end of SQL>
+
+Get count of work order status values for BEDFORD site.
+select status, count(1) from maximo.workorder where siteid='BEDFORD' group by status ; --<end of SQL>
+
+Get me work type & count of work type for work order using bar chart.
+Select worktype, count(worktype) from maximo.workorder group by worktype ; --<end of SQL>
+
+Get me work type & count of work type for work order.
+Select WORKTYPE,count(worktype) from maximo.workorder group by WORKTYPE ; --<end of SQL>
+
+Get me average of actual labor cost for active Work Orders.
+Select WORKTYPE, avg(ACTLABCOST) avg FROM MAXIMO.WORKORDER where STATUS IN ('WAPPR','APPR','INPRG') GROUP BY WORKTYPE --<end of SQL>
+
+Get me work type for all active work orders using bar chart.
+Select WORKTYPE, count(WONUM)  FROM MAXIMO.WORKORDER where STATUS IN ('WAPPR','APPR','INPRG') group by WORKTYPE --<end of SQL>
+
+Get me count of work order by Status.
+Select WORKTYPE, count(wonum) from maximo.workorder group by WORKTYPE ; --<end of SQL>
+
+Get me commonly used failure for work orders using pie chart.
+Select FAILURECODE, count(FAILURECODE) from maximo.workorder group by FAILURECODE; --<end of SQL>
+
+Show a chart containing the count of open work orders against work-type.
+Select WORKTYPE, count(wonum) from maximo.workorder group by WORKTYPE ; --<end of SQL>
+
+Provide a bar chart displaying the average actual labor cost for active work orders categorized by work type.
+Select WORKTYPE, avg(ACTLABCOST) avg FROM MAXIMO.WORKORDER where STATUS IN ('WAPPR','APPR','INPRG') GROUP BY WORKTYPE --<end of SQL>
+
+Display a bar chart illustrating the distribution of work types for all active work orders.
+Select WORKTYPE, count(WONUM)  FROM MAXIMO.WORKORDER where STATUS IN ('WAPPR','APPR','INPRG') group by WORKTYPE --<end of SQL>
+
+Present a chart displaying the count of work orders by their statuses.
+Select WORKTYPE, count(wonum) from maximo.workorder group by WORKTYPE ; --<end of SQL>
+
+Generate a pie chart showcasing the distribution of commonly used failure codes within work orders.
+Select FAILURECODE, count(FAILURECODE) from maximo.workorder group by FAILURECODE; --<end of SQL>
+
+Fetch a table displaying work order details of all completed work order for asset 11450.
+select wonum, description, worktype, status, owner, reportdate from maximo.workorder where assetnum='11450'; --<end of SQL>
+
+Get the work type, location, status for work order 1309.
+select worktype, location, status  from maximo.workorder where wonum = '1309'; --<end of sql>
+
+Get the work type, location, status for work order 'EFSWO01'.
+select worktype, location, status  from maximo.workorder where wonum = 'efswo01'; --<end of SQL>
+
+Get me count of work order by sites.
+select worktype, siteid, count(wonum) from maximo.workorder group by worktype, siteid ; --<end of sql> 
+
+
+
+
