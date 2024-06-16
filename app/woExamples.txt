@@ -1,99 +1,80 @@
-How many work orders are currently in progress?
+Input: Fetch work order details of work order 1225
+select wonum, description, worktype, status, owner, reportdate from maximo.workorder where wonum='1225'; --<end of SQL>  
+
+Input: Get the actual labor cost for work order 3478
+select actlabcost from maximo.workorder where wonum='3478'; --<end of SQL>  
+
+Input: How many work orders were completed on asset number 1234 in the last 1 year
+select count(1) from maximo.workorder where assetnum='1234' and status='COMP' and reportdate>(sysdate - 365); --<end of SQL>  
+
+Input: Get the asset number and location for work order 1234
+select assetnum, location from maximo.workorder where wonum='1234'; --<end of SQL>  
+
+Input: What is the work type of work order 1205
+select worktype from maximo.workorder where wonum='1205'; --<end of SQL>  
+
+Input: Get the asset number, status and work order priority for work order 1309
+select assetnum, status, wopriority from maximo.workorder where wonum='1309'; --<end of SQL>  
+
+Input: Get the details of the last work order reported for asset number 11450
+select wonum, description, worktype, status, owner, reportdate from maximo.workorder where assetnum='11450' and reportdate is not null order by reportdate desc limit 1; --<end of SQL> 
+
+Input: Who is the owner of work order 1309
+select owner from maximo.workorder where wonum='1309'; --<end of SQL> 
+
+Input: How many work orders are currently in progress
 select count(1) from maximo.workorder where status='INPRG'; --<end of SQL>
 
-How many preventive maintainance work orders are stuck due to material unavailablity?
+Input: How many preventive maintainance work orders are stuck due to material unavailablity
 select count(1) from maximo.workorder where worktype='PM' and status='WMATL'; --<end of SQL>
 
-Get the details of corrective maintenance work orders waiting for approval?
-select wonum, description, worktype, status, owner, reportdate from maximo.workorder where worktype='CM' and and status='WAPPR'; --<end of SQL>
-
-Get the details for all work orders reported in the last quarter?
-select wonum, description, worktype, status, owner, reportdate from maximo.workorder where reportdate>(sysdate - 90); --<end of SQL>
-
-What are the child work order details from the FREO site?
-select wonum, description, worktype, status, owner, reportdate from maximo.workorder where parent is not null and siteid='FREO'; --<end of SQL>
-
-Calculate the average estimated material cost for preventive maintenance work orders in BEDFORD site.
-SELECT avg(estmatcost) from maximo.workorder WHERE siteid = 'BEDFORD' AND worktype = 'PM'; --<end of SQL>
-
-Fetch work order details of work order 1225.
-select wonum, description, worktype, status, owner, reportdate from maximo.workorder where wonum='1225'; --<end of SQL>
-
-Get the actual labor cost for work order 3478.
-select actlabcost from maximo.workorder where wonum='3478'; --<end of SQL>
-
-Get the work order number, priority and job plan for all approved WOs in BEDFORD site.
-select wonum, wopriority, jpnum from maximo.workorder where status='APPR' and siteid='BEDFORD'; --<end of SQL>
-
-How many work orders were completed on asset number 1234 in the last 1 year?
-select count(1) from maximo.workorder where assetnum='1234' and status='COMP' and reportdate>(sysdate - 365); --<end of SQL>
-
-Get the asset number and location for work order 1234.
-select assetnum, location from maximo.workorder where wonum='1234'; --<end of SQL>
-
-What is the work type of work order 1309?
-select worktype from maximo.workorder where wonum='1309'; --<end of SQL>
-
-Get the asset number, status and work order priority for work order 1309.
-select assetnum, status, wopriority from maximo.workorder where wonum='1309'; --<end of SQL>
-
-How many work orders are currently open for asset HVAC450?
+Input: How many work orders are currently open for asset HVAC450
 select count(1) from maximo.workorder where assetnum='HVAC450' and status not in ('COMP','CLOSE'); --<end of SQL>
 
-Get the details of the last work order reported for asset number 11450.
-select wonum, description, worktype, status, owner, reportdate from maximo.workorder where assetnum='11450' and reportdate is not null order by reportdate desc limit 1; --<end of SQL>
+Input: Get count of work order status values for BEDFORD site
+select status, count(1) from maximo.workorder where siteid='BEDFORD' group by status; --<end of SQL>
 
-Who is the owner of work order 1309?
-select owner from maximo.workorder where wonum='1309'; --<end of SQL>
+Input: Get me count of work order by sites
+select worktype, siteid, count(wonum) from maximo.workorder group by worktype, siteid; --<end of SQL> 
 
-Get count of work order status values for BEDFORD site.
-select status, count(1) from maximo.workorder where siteid='BEDFORD' group by status ; --<end of SQL>
+Input: Get me count of work order by Status
+Select WORKTYPE, count(wonum) from maximo.workorder group by WORKTYPE; --<end of SQL>
 
-Get me work type & count of work type for work order using bar chart.
-Select worktype, count(worktype) from maximo.workorder group by worktype ; --<end of SQL>
-
-Get me work type & count of work type for work order.
-Select WORKTYPE,count(worktype) from maximo.workorder group by WORKTYPE ; --<end of SQL>
-
-Get me average of actual labor cost for active Work Orders.
-Select WORKTYPE, avg(ACTLABCOST) avg FROM MAXIMO.WORKORDER where STATUS IN ('WAPPR','APPR','INPRG') GROUP BY WORKTYPE --<end of SQL>
-
-Get me work type for all active work orders using bar chart.
-Select WORKTYPE, count(WONUM)  FROM MAXIMO.WORKORDER where STATUS IN ('WAPPR','APPR','INPRG') group by WORKTYPE --<end of SQL>
-
-Get me count of work order by Status.
-Select WORKTYPE, count(wonum) from maximo.workorder group by WORKTYPE ; --<end of SQL>
-
-Get me commonly used failure for work orders using pie chart.
-Select FAILURECODE, count(FAILURECODE) from maximo.workorder group by FAILURECODE; --<end of SQL>
-
-Show a chart containing the count of open work orders against work-type.
-Select WORKTYPE, count(wonum) from maximo.workorder group by WORKTYPE ; --<end of SQL>
-
-Provide a bar chart displaying the average actual labor cost for active work orders categorized by work type.
-Select WORKTYPE, avg(ACTLABCOST) avg FROM MAXIMO.WORKORDER where STATUS IN ('WAPPR','APPR','INPRG') GROUP BY WORKTYPE --<end of SQL>
-
-Display a bar chart illustrating the distribution of work types for all active work orders.
-Select WORKTYPE, count(WONUM)  FROM MAXIMO.WORKORDER where STATUS IN ('WAPPR','APPR','INPRG') group by WORKTYPE --<end of SQL>
-
-Present a chart displaying the count of work orders by their statuses.
-Select WORKTYPE, count(wonum) from maximo.workorder group by WORKTYPE ; --<end of SQL>
-
-Generate a pie chart showcasing the distribution of commonly used failure codes within work orders.
-Select FAILURECODE, count(FAILURECODE) from maximo.workorder group by FAILURECODE; --<end of SQL>
-
-Fetch a table displaying work order details of all completed work order for asset 11450.
-select wonum, description, worktype, status, owner, reportdate from maximo.workorder where assetnum='11450'; --<end of SQL>
-
-Get the work type, location, status for work order 1309.
-select worktype, location, status  from maximo.workorder where wonum = '1309'; --<end of sql>
-
-Get the work type, location, status for work order 'EFSWO01'.
+Input: Get the work type, location, status for work order 'EFSWO01'
 select worktype, location, status  from maximo.workorder where wonum = 'efswo01'; --<end of SQL>
 
-Get me count of work order by sites.
-select worktype, siteid, count(wonum) from maximo.workorder group by worktype, siteid ; --<end of sql> 
+Input: Get the work order number, priority and job plan for all approved WOs in BEDFORD site
+select wonum, wopriority, jpnum from maximo.workorder where status='APPR' and siteid='BEDFORD'; --<end of SQL>
 
+Input: Get the details of corrective maintenance work orders waiting for approval
+select wonum, description, worktype, status, owner, reportdate from maximo.workorder where worktype='CM' and and status='WAPPR'; --<end of SQL>
 
+Input: Get the details for all work orders reported in the last quarter
+select wonum, description, worktype, status, owner, reportdate from maximo.workorder where reportdate>(sysdate - 90); --<end of SQL>
 
+Input: What are the child work order details from the FREO site
+select wonum, description, worktype, status, owner, reportdate from maximo.workorder where parent is not null and siteid='FREO'; --<end of SQL>
 
+Input: Calculate the average estimated material cost for preventive maintenance work orders in BEDFORD site
+SELECT avg(estmatcost) from maximo.workorder WHERE siteid = 'BEDFORD' AND worktype = 'PM'; --<end of SQL>
+
+Input: Get me commonly used failure for work orders using pie chart
+Select FAILURECODE, count(FAILURECODE) from maximo.workorder group by FAILURECODE; --<end of SQL>
+
+Input: Show a chart containing the count of open work orders against work-type
+Select WORKTYPE, count(wonum) from maximo.workorder group by WORKTYPE; --<end of SQL>
+
+Input: Provide a bar chart displaying the average actual labor cost for active work orders categorized by work type
+Select WORKTYPE, avg(ACTLABCOST) avg FROM MAXIMO.WORKORDER where STATUS IN ('WAPPR','APPR','INPRG') GROUP BY WORKTYPE; --<end of SQL>
+
+Input: Display a bar chart illustrating the distribution of work types for all active work orders
+Select WORKTYPE, count(WONUM)  FROM MAXIMO.WORKORDER where STATUS IN ('WAPPR','APPR','INPRG') group by WORKTYPE; --<end of SQL>
+
+Input: Present a chart displaying the count of work orders by their statuses
+Select WORKTYPE, count(wonum) from maximo.workorder group by WORKTYPE ; --<end of SQL>
+
+Input: Generate a pie chart showcasing the distribution of commonly used failure codes within work orders
+Select FAILURECODE, count(FAILURECODE) from maximo.workorder group by FAILURECODE; --<end of SQL>
+
+Input: Fetch a table displaying work order details of all completed work order for asset 11450
+select wonum, description, worktype, status, owner, reportdate from maximo.workorder where assetnum='11450'; --<end of SQL>
