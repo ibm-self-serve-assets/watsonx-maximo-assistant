@@ -76,6 +76,9 @@ Select WORKTYPE, count(WONUM)  FROM MAXIMO.WORKORDER where STATUS IN ('WAPPR','A
 Input: Present a chart displaying the count of work orders by their statuses
 Select WORKTYPE, count(wonum) from maximo.workorder group by WORKTYPE ; --<end of SQL>
 
+Input: Present a chart displaying the count of work orders by their statuses for asset SP1101
+Select WORKTYPE, count(wonum) from maximo.workorder WHERE assetnum = 'SP1101' group by WORKTYPE ; --<end of SQL>
+
 Input: Generate a pie chart showcasing the distribution of commonly used failure codes within work orders
 Select FAILURECODE, count(FAILURECODE) from maximo.workorder group by FAILURECODE; --<end of SQL>
 
