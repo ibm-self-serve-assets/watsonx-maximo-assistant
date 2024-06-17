@@ -4,6 +4,9 @@ select wonum, description, worktype, status, owner, reportdate from maximo.worko
 Input: Get the actual labor cost for work order 3478
 select actlabcost from maximo.workorder where wonum='3478'; --<end of SQL>  
 
+Input: Get the estimated material cost for work order 1201
+select estmatcost from maximo.workorder where wonum='1201'; --<end of SQL>  
+
 Input: How many work orders were completed on asset number 1234 in the last 1 year
 select count(1) from maximo.workorder where assetnum='1234' and status='COMP' and reportdate>(sysdate - 365); --<end of SQL>  
 
