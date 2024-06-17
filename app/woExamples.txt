@@ -73,9 +73,6 @@ Select WORKTYPE, avg(ACTLABCOST) avg FROM MAXIMO.WORKORDER where STATUS IN ('WAP
 Input: Display a bar chart illustrating the distribution of work types for all active work orders
 Select WORKTYPE, count(WONUM)  FROM MAXIMO.WORKORDER where STATUS IN ('WAPPR','APPR','INPRG') group by WORKTYPE; --<end of SQL>
 
-Input: Present a chart displaying the count of work orders by their statuses
-Select WORKTYPE, count(wonum) from maximo.workorder group by WORKTYPE ; --<end of SQL>
-
 Input: Present a chart displaying the count of work orders by their statuses for asset SP1101
 Select WORKTYPE, count(wonum) from maximo.workorder WHERE assetnum = 'SP1101' group by WORKTYPE ; --<end of SQL>
 
