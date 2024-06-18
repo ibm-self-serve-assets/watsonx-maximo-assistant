@@ -4,9 +4,6 @@ select wonum, description, worktype, status, owner, reportdate from maximo.worko
 Input: Get the actual labor cost for work order 3478
 select actlabcost from maximo.workorder where wonum='3478'; --<end of SQL>  
 
-Input: Get the estimated material cost for work order 1201
-select estmatcost from maximo.workorder where wonum='1201'; --<end of SQL>  
-
 Input: How many work orders were completed on asset number 1234 in the last 1 year
 select count(1) from maximo.workorder where assetnum='1234' and status='COMP' and reportdate>(sysdate - 365); --<end of SQL>  
 
@@ -73,11 +70,11 @@ Select WORKTYPE, avg(ACTLABCOST) avg FROM MAXIMO.WORKORDER where STATUS IN ('WAP
 Input: Display a bar chart illustrating the distribution of work types for all active work orders
 Select WORKTYPE, count(WONUM)  FROM MAXIMO.WORKORDER where STATUS IN ('WAPPR','APPR','INPRG') group by WORKTYPE; --<end of SQL>
 
-Input: Present a chart displaying the count of work orders by their statuses for asset SP1101
-Select WORKTYPE, count(wonum) from maximo.workorder WHERE assetnum = 'SP1101' group by WORKTYPE ; --<end of SQL>
+Input: Present a chart displaying the count of work orders by their statuses
+Select WORKTYPE, count(wonum) from maximo.workorder group by WORKTYPE; --<end of SQL>
 
 Input: Generate a pie chart showcasing the distribution of commonly used failure codes within work orders
 Select FAILURECODE, count(FAILURECODE) from maximo.workorder group by FAILURECODE; --<end of SQL>
 
 Input: Fetch a table displaying work order details of all completed work order for asset 11450
-select wonum, description, worktype, status, owner, reportdate from maximo.workorder where assetnum='11450'; --<end of SQL>
+select wonum, description, worktype, status, owner, reportdate from maximo.workorder where assetnum='11450' and STATUS in('COMP','CLOSE'); --<end of SQL>
