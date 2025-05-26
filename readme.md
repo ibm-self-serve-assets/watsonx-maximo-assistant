@@ -177,7 +177,7 @@ Project is created.
 
 2. Enter any Application `Name`
 
-3. Enter the `Docker Image name` that we already created. (latest Image : docker.io/vidishalimbola/maixmo-assist-10-12-24)
+3. Enter the `Docker Image name` that we already created. (latest Image : `docker.io/vidishalimbola/maixmo-assist-10-12-24`)
 
 4. Click on `Configure image` button
 
